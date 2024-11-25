@@ -1,7 +1,7 @@
 {
   "name": "wordgames",
   "version": "1.0.0",
-  "homepage": "https://jawa-san.github.io/WordGames/",
+  "homepage": "https://jawa-san.github.io/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

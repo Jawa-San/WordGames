@@ -1,10 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from './LandingPage';
-import Mastermind from './Mastermind'; // Assuming your Mastermind component is in Mastermind.js
-import SuikaGame from './SuikaGame'; // Import the SuikaGame component
-import CrossMath from './CrossMath'; // Import the CrossMath component
-import ZenWord from './ZenWord'; // Import the ZenWord component
+import Mastermind from './Mastermind';
+import SuikaGame from './SuikaGame';
+import CrossMath from './CrossMath';
+import ZenWord from './ZenWord';
+
 function App() {
   return (
     <Router>
