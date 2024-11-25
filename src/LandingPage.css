@@ -1,0 +1,53 @@
+/* Custom styles for the calendar and checkboxes */
+.react-calendar {
+    width: 100%;
+    max-width: 800px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .react-calendar__tile {
+    position: relative;
+    padding: 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .react-calendar__tile--active {
+    background-color: #f0f0f0;
+  }
+  
+  .react-calendar__tile:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .game-checkboxes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 5px;
+  }
+  
+  .checkbox-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .game-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+  
+  .game-checkbox input {
+    margin-right: 5px;
+  }
+  
+  .completion-indicator {
+    font-size: 0.9em;
+    color: #333;
+  }
