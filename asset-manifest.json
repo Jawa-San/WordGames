@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/WordGames/static/css/main.d6e62f6d.css",
-    "main.js": "/WordGames/static/js/main.b7b8229d.js",
-    "static/js/453.e6dce369.chunk.js": "/WordGames/static/js/453.e6dce369.chunk.js",
-    "index.html": "/WordGames/index.html",
-    "main.d6e62f6d.css.map": "/WordGames/static/css/main.d6e62f6d.css.map",
-    "main.b7b8229d.js.map": "/WordGames/static/js/main.b7b8229d.js.map",
-    "453.e6dce369.chunk.js.map": "/WordGames/static/js/453.e6dce369.chunk.js.map"
+    "main.css": "/static/css/main.40dcd533.css",
+    "main.js": "/static/js/main.1e00c26a.js",
+    "static/js/488.5aec2be1.chunk.js": "/static/js/488.5aec2be1.chunk.js",
+    "index.html": "/index.html",
+    "main.40dcd533.css.map": "/static/css/main.40dcd533.css.map",
+    "main.1e00c26a.js.map": "/static/js/main.1e00c26a.js.map",
+    "488.5aec2be1.chunk.js.map": "/static/js/488.5aec2be1.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d6e62f6d.css",
-    "static/js/main.b7b8229d.js"
+    "static/css/main.40dcd533.css",
+    "static/js/main.1e00c26a.js"
   ]
 }
