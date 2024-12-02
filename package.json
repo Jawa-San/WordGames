@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "react": "^18.0.0",
+    "react-calendar": "^5.1.0",
     "react-dom": "^18.0.0",
-    "react-scripts": "5.0.0"
+    "react-router-dom": "^7.0.1",
+    "react-scripts": "5.0.0",
+    "styled-components": "^6.1.13",
+    "web-vitals": "^4.2.4"
   },
   "devDependencies": {
     "gh-pages": "^4.0.0"

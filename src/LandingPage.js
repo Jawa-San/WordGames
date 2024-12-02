@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import './LandingPage.css'; // Import custom styles
+import Checkbox from './Checkbox'; // Adjust the path as necessary
 
 function LandingPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [gameCompletion, setGameCompletion] = useState({});
+  const [todayGameCompletion, setTodayGameCompletion] = useState({});
 
   useEffect(() => {
     document.title = "word games :}";
@@ -57,6 +59,27 @@ function LandingPage() {
     .catch(error => console.error('Error updating calendar state:', error));
   };
 
+  const handleTodayCheckboxChange = (game) => {
+    const updatedTodayState = {
+      ...todayGameCompletion,
+      [game]: !todayGameCompletion[game]
+    };
+    setTodayGameCompletion(updatedTodayState);
+    console.log('Updated today\'s state:', updatedTodayState);
+
+    // Update the overall gameCompletion state
+    const dateKey = selectedDate.toDateString();
+    const updatedGameCompletion = {
+      ...gameCompletion,
+      [dateKey]: {
+        ...gameCompletion[dateKey],
+        [game]: updatedTodayState[game]
+      }
+    };
+    setGameCompletion(updatedGameCompletion);
+    console.log('Updated overall game completion state:', updatedGameCompletion);
+  };
+
   const renderTileContent = ({ date, view }) => {
     if (view === 'month') {
       const dateKey = date.toDateString();
@@ -91,10 +114,42 @@ function LandingPage() {
     }
   };
 
+  const isToday = (date) => {
+    const today = new Date();
+    return date.getDate() === today.getDate() &&
+           date.getMonth() === today.getMonth() &&
+           date.getFullYear() === today.getFullYear();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-200 via-purple-200 to-pink-300 flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold text-black mb-4">Let's play some word games ^_^</h1>
+      <h1 className="text-4xl font-bold text-black mb-4 mt-8">Let's play some word games ^_^</h1>
       <p className="text-lg text-black mb-8">Click below to start playing!~~</p>
+
+      <div className="today-section mb-8" style={{ marginBottom: '20px' }}>
+        {isToday(selectedDate) && (
+          <>
+            <h2 className="text-2xl font-semibold text-black">Today's Games</h2>
+            <div className="checkbox-list" style={{ marginTop: '15px' }}>
+              {games.map(game => (
+                <div key={game} className="game-checkbox" style={{ marginBottom: '10px' }}>
+                  <Checkbox
+                    checked={todayGameCompletion[game] || false}
+                    onChange={() => handleTodayCheckboxChange(game)}
+                  />
+                  <label 
+                    htmlFor={`today-${game}`} 
+                    style={{ marginLeft: '15px', fontWeight: 'bold' }}
+                  >
+                    {game}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
       <Link to="https://www.nytimes.com/games/wordle/index.html" className="px-4 py-2 bg-purple-600 text-white rounded mb-4">
         Play Wordle
       </Link>
