@@ -20,18 +20,37 @@ function LandingPage() {
     fetch('https://mastermindserver.onrender.com/calendarState')
       .then(response => response.json())
       .then(data => {
-        console.log('Fetched data:', data);
-        setGameCompletion(data)
+        console.log('Fetched calendar state:', data);
+        setGameCompletion(data);
       })
       .catch(error => console.error('Error fetching calendar state:', error));
+  }, []);
+
+  useEffect(() => {
+    // Fetch today's game completion state when the component mounts
+    const dateKey = new Date().toDateString(); // Get today's date as a string
+    fetch(`https://mastermindserver.onrender.com/todayGameCompletion?date=${dateKey}`)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Fetched today\'s game completion:', data);
+        // Ensure the data is in the correct format
+        if (data) {
+          setTodayGameCompletion(data); // Set the state with today's game completion data
+        } else {
+          console.error('No data returned for today\'s game completion');
+        }
+      })
+      .catch(error => console.error('Error fetching today\'s game completion:', error));
   }, []);
 
   const games = [
     'NYT Word Games',
     'Chess Puzzle',
+    'Mastermind',
+    'Duolingo',
     'Cross Math',
     'ZenWord',
-    'Mastermind'
+    'Nonogram.com'
   ];
 
   const handleCheckboxChange = (date, game) => {
@@ -78,6 +97,22 @@ function LandingPage() {
     };
     setGameCompletion(updatedGameCompletion);
     console.log('Updated overall game completion state:', updatedGameCompletion);
+
+    // Send the updated state to the backend
+    fetch('https://mastermindserver.onrender.com/updateCalendarState', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(updatedGameCompletion) // Send the updated game completion state
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Database updated successfully:', data);
+    })
+    .catch(error => {
+      console.error('Error updating database:', error);
+    });
   };
 
   const renderTileContent = ({ date, view }) => {
@@ -156,8 +191,11 @@ function LandingPage() {
       <Link to="https://www.chess.com/daily-chess-puzzle" className="px-4 py-2 bg-blue-600 text-white rounded mb-4">
         Play Chess Puzzle
       </Link>
-      <Link to="/mastermind" className="px-4 py-2 bg-green-600 text-white rounded mb-4">
+      <Link to="/mastermind" className="px-4 py-2 bg-blue-400 text-white rounded mb-4">
         Play Mastermind
+      </Link>
+      <Link to="https://www.duolingo.com/" className="px-4 py-2 bg-green-600 text-white rounded mb-4">
+        Play Duolingo
       </Link>
       <Link to="/crossmath" className="px-4 py-2 bg-yellow-600 text-white rounded mb-4">
         Play CrossMath
