@@ -48,6 +48,7 @@ function LandingPage() {
     'Chess Puzzle',
     'Mastermind',
     'Duolingo',
+    'Solitaire',
     'Cross Math',
     'ZenWord',
     'Nonogram.com'
@@ -196,6 +197,9 @@ function LandingPage() {
       </Link>
       <Link to="https://www.duolingo.com/" className="px-4 py-2 bg-green-600 text-white rounded mb-4">
         Play Duolingo
+      </Link>
+      <Link to="https://solitaired.com/" className="px-4 py-2 bg-indigo-600 text-white rounded mb-4">
+        Play Solitaire
       </Link>
       <Link to="/crossmath" className="px-4 py-2 bg-yellow-600 text-white rounded mb-4">
         Play CrossMath
