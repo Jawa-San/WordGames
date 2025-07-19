@@ -14,3 +14,8 @@ Chess Daily Puzzle is an online game where players solve a single chess problem 
 ### `MasterMind`
 
 Mastermind is a classic code-breaking board game where there is a secret color code, and the player attempts to guess it within a limited number of turns. The player receives feedback after each guess: for correct color or correct color and position.
+
+### `Solitaire`
+
+Solitaire is a card game that requires planning and a keen eye. Be careful as this game can seer into the deep crevices of your brain and 
+you will notice it everywhere you look.
