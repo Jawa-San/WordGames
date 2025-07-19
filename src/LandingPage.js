@@ -9,39 +9,76 @@ import Checkbox from './Checkbox'; // Adjust the path as necessary
 function LandingPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [gameCompletion, setGameCompletion] = useState({});
-  const [todayGameCompletion, setTodayGameCompletion] = useState({});
+  const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
     document.title = "word games :}";
   }, []);
 
+  // Load from localStorage first, then try to sync with server
   useEffect(() => {
-    // Fetch the initial state from the backend
+    // Load from localStorage immediately
+    const savedData = localStorage.getItem('gameCompletion');
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData);
+        setGameCompletion(parsedData);
+        console.log('Loaded from localStorage:', parsedData);
+      } catch (error) {
+        console.error('Error parsing localStorage data:', error);
+      }
+    }
+
+    // Then try to fetch from server and merge
     fetch('https://mastermindserver.onrender.com/calendarState')
-      .then(response => response.json())
-      .then(data => {
-        console.log('Fetched calendar state:', data);
-        setGameCompletion(data);
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
       })
-      .catch(error => console.error('Error fetching calendar state:', error));
+             .then(serverData => {
+         console.log('Fetched calendar state from server:', serverData);
+         setIsOnline(true);
+         
+         // Merge server data with local data (server takes precedence for conflicts)
+         setGameCompletion(prevLocal => {
+           const mergedData = { ...prevLocal, ...serverData };
+           
+           // If local data has changes not on server, upload them
+           const hasLocalChanges = JSON.stringify(prevLocal) !== JSON.stringify(serverData);
+           if (hasLocalChanges && Object.keys(prevLocal).length > 0) {
+             console.log('Uploading local changes to server...');
+             fetch('https://mastermindserver.onrender.com/updateCalendarState', {
+               method: 'POST',
+               headers: {
+                 'Content-Type': 'application/json'
+               },
+               body: JSON.stringify(mergedData)
+             })
+             .then(response => {
+               if (response.ok) {
+                 console.log('Local changes uploaded successfully');
+               } else {
+                 console.error('Failed to upload local changes');
+               }
+             })
+             .catch(error => console.error('Error uploading local changes:', error));
+           }
+           
+           // Save the merged data to localStorage
+           localStorage.setItem('gameCompletion', JSON.stringify(mergedData));
+           return mergedData;
+         });
+       })
+      .catch(error => {
+        console.error('Error fetching calendar state from server:', error);
+        setIsOnline(false);
+        // If server fails, we'll continue with localStorage data
+      });
   }, []);
 
-  useEffect(() => {
-    // Fetch today's game completion state when the component mounts
-    const dateKey = new Date().toDateString(); // Get today's date as a string
-    fetch(`https://mastermindserver.onrender.com/todayGameCompletion?date=${dateKey}`)
-      .then(response => response.json())
-      .then(data => {
-        console.log('Fetched today\'s game completion:', data);
-        // Ensure the data is in the correct format
-        if (data) {
-          setTodayGameCompletion(data); // Set the state with today's game completion data
-        } else {
-          console.error('No data returned for today\'s game completion');
-        }
-      })
-      .catch(error => console.error('Error fetching today\'s game completion:', error));
-  }, []);
+
 
   const games = [
     'NYT Word Games',
@@ -63,57 +100,98 @@ function LandingPage() {
         [game]: !gameCompletion[dateKey]?.[game]
       }
     };
+    
+    // Always save to localStorage first (immediate backup)
+    localStorage.setItem('gameCompletion', JSON.stringify(updatedState));
     setGameCompletion(updatedState);
     console.log('Updated state:', updatedState);
 
-    // Send the updated state to the backend
-    fetch('https://mastermindserver.onrender.com/updateCalendarState', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updatedState)
-    })
-    .then(response => response.text())
-    .then(message => console.log(message))
-    .catch(error => console.error('Error updating calendar state:', error));
+    // Try to send to server with retry logic
+    const updateServer = async (retryCount = 0) => {
+      try {
+        const response = await fetch('https://mastermindserver.onrender.com/updateCalendarState', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedState)
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const message = await response.text();
+        console.log('Server updated successfully:', message);
+        setIsOnline(true);
+      } catch (error) {
+        console.error('Error updating server:', error);
+        setIsOnline(false);
+        
+        // Retry up to 2 times with exponential backoff
+        if (retryCount < 2) {
+          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+          console.log(`Retrying server update in ${delay}ms...`);
+          setTimeout(() => updateServer(retryCount + 1), delay);
+        } else {
+          console.log('Server update failed, but data is saved locally');
+        }
+      }
+    };
+    
+    updateServer();
   };
 
   const handleTodayCheckboxChange = (game) => {
-    const updatedTodayState = {
-      ...todayGameCompletion,
-      [game]: !todayGameCompletion[game]
-    };
-    setTodayGameCompletion(updatedTodayState);
-    console.log('Updated today\'s state:', updatedTodayState);
-
-    // Update the overall gameCompletion state
-    const dateKey = selectedDate.toDateString();
+    const today = new Date();
+    const dateKey = today.toDateString();
     const updatedGameCompletion = {
       ...gameCompletion,
       [dateKey]: {
         ...gameCompletion[dateKey],
-        [game]: updatedTodayState[game]
+        [game]: !gameCompletion[dateKey]?.[game]
       }
     };
+    
+    // Always save to localStorage first (immediate backup)
+    localStorage.setItem('gameCompletion', JSON.stringify(updatedGameCompletion));
     setGameCompletion(updatedGameCompletion);
-    console.log('Updated overall game completion state:', updatedGameCompletion);
+    console.log('Updated game completion state:', updatedGameCompletion);
 
-    // Send the updated state to the backend
-    fetch('https://mastermindserver.onrender.com/updateCalendarState', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updatedGameCompletion) // Send the updated game completion state
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Database updated successfully:', data);
-    })
-    .catch(error => {
-      console.error('Error updating database:', error);
-    });
+    // Try to send to server with retry logic
+    const updateServer = async (retryCount = 0) => {
+      try {
+        const response = await fetch('https://mastermindserver.onrender.com/updateCalendarState', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedGameCompletion)
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Database updated successfully:', data);
+        setIsOnline(true);
+      } catch (error) {
+        console.error('Error updating database:', error);
+        setIsOnline(false);
+        
+        // Retry up to 2 times with exponential backoff
+        if (retryCount < 2) {
+          const delay = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+          console.log(`Retrying database update in ${delay}ms...`);
+          setTimeout(() => updateServer(retryCount + 1), delay);
+        } else {
+          console.log('Database update failed, but data is saved locally');
+        }
+      }
+    };
+    
+    updateServer();
   };
 
   const renderTileContent = ({ date, view }) => {
@@ -158,64 +236,109 @@ function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-200 via-purple-200 to-pink-300 flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold text-black mb-4 mt-8">Let's play some word games ^_^</h1>
-      <p className="text-lg text-black mb-8">Click below to start playing!~~</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-300 via-purple-200 to-pink-300 py-8 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-800 mb-4">Word Games :]</h1>
+          <p className="text-xl text-gray-600">Let's conquer some puzzles together!</p>
+          
+          {/* Connection Status Indicator */}
+          <div className="mt-4">
+            {isOnline ? (
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                Connected - Data synced to cloud
+              </div>
+            ) : (
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                Offline - Data saved locally only
+              </div>
+            )}
+          </div>
+        </div>
 
-      <div className="today-section mb-8" style={{ marginBottom: '20px' }}>
-        {isToday(selectedDate) && (
-          <>
-            <h2 className="text-2xl font-semibold text-black">Today's Games</h2>
-            <div className="checkbox-list" style={{ marginTop: '15px' }}>
-              {games.map(game => (
-                <div key={game} className="game-checkbox" style={{ marginBottom: '10px' }}>
-                  <Checkbox
-                    checked={todayGameCompletion[game] || false}
-                    onChange={() => handleTodayCheckboxChange(game)}
-                  />
-                  <label 
-                    htmlFor={`today-${game}`} 
-                    style={{ marginLeft: '15px', fontWeight: 'bold' }}
-                  >
-                    {game}
-                  </label>
-                </div>
-              ))}
+        {/* Top Row: Today's Games and Quick Access side by side */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-8">
+          {/* Today's Games */}
+          {isToday(selectedDate) && (
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Today's Games</h2>
+              <div className="space-y-3">
+                {games.map(game => {
+                  const today = new Date();
+                  const todayKey = today.toDateString();
+                  const isCompleted = gameCompletion[todayKey]?.[game] || false;
+                  return (
+                    <div key={game} className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                      <Checkbox
+                        checked={isCompleted}
+                        onChange={() => handleTodayCheckboxChange(game)}
+                      />
+                      <label 
+                        className={`ml-4 text-lg cursor-pointer select-none ${isCompleted ? 'line-through text-gray-500' : 'text-gray-800'}`}
+                        onClick={() => handleTodayCheckboxChange(game)}
+                      >
+                        {game}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </>
-        )}
-      </div>
+          )}
 
-      <Link to="https://www.nytimes.com/games/wordle/index.html" className="px-4 py-2 bg-purple-600 text-white rounded mb-4">
-        Play Wordle
-      </Link>
-      <Link to="https://www.chess.com/daily-chess-puzzle" className="px-4 py-2 bg-blue-600 text-white rounded mb-4">
-        Play Chess Puzzle
-      </Link>
-      <Link to="/mastermind" className="px-4 py-2 bg-blue-400 text-white rounded mb-4">
-        Play Mastermind
-      </Link>
-      <Link to="https://www.duolingo.com/" className="px-4 py-2 bg-green-600 text-white rounded mb-4">
-        Play Duolingo
-      </Link>
-      <Link to="https://solitaired.com/" className="px-4 py-2 bg-indigo-600 text-white rounded mb-4">
-        Play Solitaire
-      </Link>
-      <Link to="/crossmath" className="px-4 py-2 bg-yellow-600 text-white rounded mb-4">
-        Play CrossMath
-      </Link>
-      <Link to="/zenword" className="px-4 py-2 bg-orange-600 text-white rounded mb-4">
-        Play ZenWord
-      </Link>
-      <Link to="/suika" className="px-4 py-2 bg-red-600 text-white rounded">
-        Play Suika Game
-      </Link>
-      <div className="mt-8">
-        <Calendar
-          onChange={setSelectedDate}
-          value={selectedDate}
-          tileContent={renderTileContent}
-        />
+          {/* Quick Access Games */}
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Let's Play!</h2>
+            <div className="space-y-3">
+              <Link 
+                to="https://www.nytimes.com/games/wordle/index.html" 
+                className="block w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                NYT Word Games
+              </Link>
+              <Link 
+                to="https://www.chess.com/daily-chess-puzzle" 
+                className="block w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                Chess Puzzle
+              </Link>
+              <Link 
+                to="/mastermind" 
+                className="block w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                Mastermind
+              </Link>
+              <Link 
+                to="https://www.duolingo.com/" 
+                className="block w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                Duolingo
+              </Link>
+              <Link 
+                to="https://solitaired.com/" 
+                className="block w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                Solitaire
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Full Width Calendar */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Progress Calendar</h2>
+          <div className="calendar-container">
+            <Calendar
+              onChange={setSelectedDate}
+              value={selectedDate}
+              tileContent={renderTileContent}
+              className="mx-auto"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
