@@ -330,7 +330,7 @@ function LandingPage() {
               </Link>
               <Link 
                 to="https://nonograms-katana.com/play/" 
-                className="block w-full px-6 py-3 bg-magenta-600 hover:bg-magenta-700 text-white rounded-lg text-center font-medium transition-colors"
+                className="block w-full px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Nonogram
               </Link>
