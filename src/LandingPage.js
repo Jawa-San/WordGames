@@ -312,25 +312,25 @@ function LandingPage() {
               </Link>
               <Link 
                 to="https://www.duolingo.com/" 
-                className="block w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-center font-medium transition-colors"
+                className="block w-full px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Duolingo
               </Link>
               <Link 
                 to="https://solitaired.com/" 
-                className="block w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg text-center font-medium transition-colors"
+                className="block w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Solitaire
               </Link>
               <Link 
                 to="https://sudokubliss.com/killer/evil" 
-                className="block w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-center font-medium transition-colors"
+                className="block w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Sudoku
               </Link>
               <Link 
                 to="https://nonograms-katana.com/play/" 
-                className="block w-full px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-center font-medium transition-colors"
+                className="block w-full px-6 py-3 bg-magenta-600 hover:bg-magenta-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Nonogram
               </Link>
