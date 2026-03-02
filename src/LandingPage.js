@@ -87,8 +87,6 @@ function LandingPage() {
     'Duolingo',
     'Solitaire',
     'Sudoku',
-    'Cross Math',
-    'ZenWord',
     'Nonogram.com'
   ];
 
@@ -329,6 +327,12 @@ function LandingPage() {
                 className="block w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Sudoku
+              </Link>
+              <Link 
+                to="https://nonograms-katana.com/play/" 
+                className="block w-full px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                Nonogram
               </Link>
             </div>
           </div>
