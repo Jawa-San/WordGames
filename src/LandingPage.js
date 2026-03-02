@@ -86,6 +86,7 @@ function LandingPage() {
     'Mastermind',
     'Duolingo',
     'Solitaire',
+    'Sudoku',
     'Cross Math',
     'ZenWord',
     'Nonogram.com'
@@ -322,6 +323,12 @@ function LandingPage() {
                 className="block w-full px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Solitaire
+              </Link>
+              <Link 
+                to="https://sudokubliss.com/killer/evil" 
+                className="block w-full px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                Sudoku
               </Link>
             </div>
           </div>
