@@ -296,13 +296,13 @@ function LandingPage() {
             <div className="space-y-3">
               <Link 
                 to="https://www.nytimes.com/games/wordle/index.html" 
-                className="block w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-center font-medium transition-colors"
+                className="block w-full px-6 py-3 bg-magenta-600 hover:bg-magenta-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 NYT Word Games
               </Link>
               <Link 
                 to="https://lessgames.com/" 
-                className="block w-full px-6 py-3 bg-lavender-600 hover:bg-lavender-700 text-white rounded-lg text-center font-medium transition-colors"
+                className="block w-full px-6 py-3 bg-burgundy-600 hover:bg-burgundy-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Less Games
               </Link>
