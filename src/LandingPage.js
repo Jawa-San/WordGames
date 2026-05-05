@@ -302,7 +302,7 @@ function LandingPage() {
               </Link>
               <Link 
                 to="https://lessgames.com/" 
-                className="block w-full px-6 py-3 bg-navy-600 hover:bg-navy-700 text-white rounded-lg text-center font-medium transition-colors"
+                className="block w-full px-6 py-3 bg-lavender-600 hover:bg-lavender-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Less Games
               </Link>
@@ -310,7 +310,7 @@ function LandingPage() {
                 to="https://dialed.gg/" 
                 className="block w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-center font-medium transition-colors"
               >
-                Chess Puzzle
+                Color Memory
               </Link>
               <Link 
                 to="https://www.chess.com/daily-chess-puzzle" 
