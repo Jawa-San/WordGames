@@ -318,6 +318,12 @@ function LandingPage() {
               >
                 Chess Puzzle
               </Link>
+                <Link 
+                to="https://www.nytimes.com/games/wordle/index.html" 
+                className="block w-full px-6 py-3 bg-lime-600 hover:bg-lime-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                NYT Word Games
+              </Link>
               <Link 
                 to="/mastermind" 
                 className="block w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-center font-medium transition-colors"
