@@ -84,6 +84,7 @@ function LandingPage() {
     'NYT Word Games',
     'Less Games',
     'Color Memory',
+    'Map Tap',
     'Chess Puzzle',
     'Mastermind',
     'Duolingo',
