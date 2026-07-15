@@ -318,13 +318,13 @@ function LandingPage() {
                 to="https://maptap.gg/" 
                 className="block w-full px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-center font-medium transition-colors"
               >
-                Geoguessr
+               Map Tap
               </Link>
                 <Link 
                 to="https://www.geoguessr.com/daily-challenges/" 
                 className="block w-full px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-center font-medium transition-colors"
               >
-                Map Tap
+                Geoguessr
               </Link>
               <Link 
                 to="https://www.chess.com/daily-chess-puzzle" 
