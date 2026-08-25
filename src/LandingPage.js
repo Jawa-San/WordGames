@@ -84,6 +84,7 @@ function LandingPage() {
     'NYT Word Games',
     'Less Games',
     'Color Memory',
+    'Globle',
     'Map Tap',
     'Geoguessr',
     'Chess Puzzle',
@@ -313,6 +314,12 @@ function LandingPage() {
                 className="block w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-center font-medium transition-colors"
               >
                 Color Memory
+              </Link>
+                <Link 
+                to="https://globle-game.com/game" 
+                className="block w-full px-6 py-3 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-center font-medium transition-colors"
+              >
+                Globle
               </Link>
               <Link 
                 to="https://maptap.gg/" 
